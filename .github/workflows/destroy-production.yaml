@@ -1,4 +1,4 @@
-name: Deploy On Production
+name: Destroy Production
 
 on:
   workflow_dispatch:
