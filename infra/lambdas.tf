@@ -29,11 +29,6 @@ resource "aws_iam_role_policy_attachment" "awslambdaexecute" {
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.lambda-role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
 resource "aws_lambda_function" "mapear-dados-arquivos" {
   function_name = "${var.env}-mapear-dados-arquivos"
   filename      = "${path.module}/packages/MapearDadosArquivo.zip"
