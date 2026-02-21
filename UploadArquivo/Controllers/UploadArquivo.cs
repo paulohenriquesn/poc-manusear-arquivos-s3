@@ -46,7 +46,7 @@ namespace UploadArquivo.Controllers
                 FilePath = $"processamento/{file.FileName}"
             });
 
-            await queueService.PublicOnTopic("processar-arquivos", messageBody);
+            await queueService.PublicOnTopic("prod-processar-arquivos", messageBody);
 
             return Ok();
         }

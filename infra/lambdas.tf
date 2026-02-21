@@ -29,15 +29,25 @@ resource "aws_iam_role_policy_attachment" "awslambdaexecute" {
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/${var.env}-mapear-dados-arquivos"
+  retention_in_days = 7
+}
+
 resource "aws_lambda_function" "mapear-dados-arquivos" {
   function_name = "${var.env}-mapear-dados-arquivos"
   filename      = "${path.module}/packages/MapearDadosArquivo.zip"
-  runtime       = "dotnet8" 
+  runtime       = "dotnet10" 
   handler       = "MapearDadosArquivo::MapearDadosArquivo.Function::FunctionHandler" 
   role          = aws_iam_role.lambda-role.arn
   source_code_hash = filebase64sha256("${path.module}/packages/MapearDadosArquivo.zip")
   timeout = 60
   memory_size = 512
+
+  depends_on = [
+    aws_cloudwatch_log_group.lambda_log_group,
+    aws_iam_role_policy_attachment.lambda_logs
+  ]
 }
 
 resource "aws_lambda_event_source_mapping" "sqs_to_lambda" {
