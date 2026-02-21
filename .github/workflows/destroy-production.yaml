@@ -1,0 +1,37 @@
+name: Deploy On Production
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: sa-east-1
+  ENVIRONMENT: prod
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '10.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="region=${{ env.AWS_REGION }}"
+        working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        working-directory: ./infra
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
