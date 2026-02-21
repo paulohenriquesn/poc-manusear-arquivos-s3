@@ -11,8 +11,27 @@ env:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '10.0.x' ]
+
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+        
+      -name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build 
+
+      - name: Package Lambda MapearDadosArquivo
+        run: dotnet lambda package --configuration Release --framework net10.0 --output-package ../infra/packages/MapearDadosArquivo.zip
+        working-directory: ./MapearDadosArquivo
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
