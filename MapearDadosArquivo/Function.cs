@@ -19,7 +19,7 @@ namespace MapearDadosArquivo
 
                 try
                 {
-                    Console.WriteLine($"Received one message: {record.Body} processing...");
+                    context.Logger.LogLine($"Received one message: {record.Body} processing...");
                     var input = JsonSerializer.Deserialize<FunctionRequest>(record.Body);
 
                     var fileStream = await _storageService.GetFileAsync(input.BucketName, input.FilePath);
@@ -32,7 +32,7 @@ namespace MapearDadosArquivo
 
                     var listOfMappedData = csvHelper.Execute(streamReader);
 
-                    Console.WriteLine(JsonSerializer.Serialize(listOfMappedData));
+                    context.Logger.LogLine(JsonSerializer.Serialize(listOfMappedData));
 
                     using (var memoryStream = new MemoryStream())
                     {
@@ -43,7 +43,7 @@ namespace MapearDadosArquivo
 
                 catch (Exception exception)
                 {
-                    Console.WriteLine($"{exception.Message} ${exception.StackTrace}");
+                    context.Logger.LogLine($"{exception.Message} {exception.StackTrace}");
                     throw;
                 }
             }
