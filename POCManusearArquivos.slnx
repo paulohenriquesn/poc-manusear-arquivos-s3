@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MapearDadosArquivo/MapearDadosArquivo.csproj" />
+  <Project Path="UploadArquivo/UploadArquivo.csproj" />
+</Solution>
